@@ -12,6 +12,12 @@ export default class DisconnectionLogger extends DiscordBasePlugin {
     static get optionsSpecification() {
         return {
             ...DiscordBasePlugin.optionsSpecification,
+            channelID: {
+              required: true,
+              description: 'The ID of the channel to log admin broadcasts to.',
+              default: '',
+              example: '667741905228136459'
+            },
             warnInGameAdmins: {
                 required: false,
                 default: false,
@@ -38,7 +44,7 @@ export default class DisconnectionLogger extends DiscordBasePlugin {
         const res = regex.exec(line)?.groups;
         const reasons = [ 'Host closed the connection.' ]
 
-        if (reasons.includes(res.reason)) {
+        if (res && reasons.includes(res.reason)) {
             const admins = await this.server.getAdminsWithPermission('canseeadminchat');
             for (const player of this.server.players) {
                 if (!admins.includes(player.steamID)) continue;
